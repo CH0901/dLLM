@@ -1,0 +1,9 @@
+{
+  "method": "gptaq",
+  "weight_bits": 4,
+  "act_bits": 16,
+  "n_cal_samples": 16,
+  "n_eval_samples": 2,
+  "model_path": "../models/LLaDA-8B-Instruct",
+  "seed": 42
+}
