@@ -160,10 +160,16 @@ class GPTAQQuantizer(BaseQuantizer):
         # Step 1: 모든 calibration data를 embedding 통과 → 첫 layer 입력 수집
         print("  Collecting first layer inputs...")
         self._layer_inputs = []
+        # embedding을 GPU로 이동하여 처리
+        from llada_utils import get_transformer
+        transformer = get_transformer(self.model)
+        transformer.wte = transformer.wte.to(dev)
         for inp in calibration_data:
             with torch.no_grad():
-                x = embed_forward(self.model, inp.to(dev))
+                x = transformer.wte(inp.to(dev))
                 self._layer_inputs.append(x.cpu())
+        transformer.wte = transformer.wte.cpu()  # 다시 CPU로
+        torch.cuda.empty_cache()
 
         # Step 2: Layer-by-layer 처리
         for layer_idx in range(len(layers)):
