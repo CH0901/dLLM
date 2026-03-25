@@ -70,7 +70,8 @@ class QuaRotApplier:
         return self.model
 
     def _apply_rotation_to_model(self):
-        R = self.R.to(torch.float64)
+        # 모델이 CPU에 있으므로 R도 CPU에서 연산
+        R = self.R.cpu().to(torch.float64)
         R_T = R.T
 
         # Embedding: W_emb = W_emb @ R^T
